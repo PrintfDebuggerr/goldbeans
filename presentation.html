@@ -1,0 +1,2787 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Goldbeans — Dijital Sadakat Sistemi</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet" />
+
+  <style>
+    /* ============================================================
+       BRAND TOKENS
+    ============================================================ */
+    :root {
+      --c1: #023900;
+      --c2: #012200;
+      --c1-rgb: 2, 57, 0;
+      --c2-rgb: 1, 34, 0;
+      --c1-lt: #3db300;
+      /* lightened primary for text/glow */
+
+      --bg0: #060a06;
+      --bg1: #080e08;
+      --bg2: #0c130c;
+      --card: rgba(255, 255, 255, .045);
+      --card-h: rgba(255, 255, 255, .075);
+
+      --t1: #F2F5F2;
+      --t2: rgba(242, 245, 242, .50);
+      --t3: rgba(242, 245, 242, .26);
+
+      --border: rgba(255, 255, 255, .07);
+      --border-c: rgba(var(--c1-rgb), .35);
+
+      --grad: linear-gradient(135deg, #3db300 0%, #012200 100%);
+      --grad-s: linear-gradient(135deg, rgba(2, 57, 0, .18) 0%, rgba(1, 34, 0, .07) 100%);
+
+      --fH: 'Playfair Display', Georgia, serif;
+      --fB: 'Inter', system-ui, sans-serif;
+    }
+
+    /* ============================================================
+       RESET
+    ============================================================ */
+    *,
+    *::before,
+    *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-snap-type: y proximity;
+      font-size: 16px;
+    }
+
+    body {
+      background: var(--bg0);
+      color: var(--t1);
+      font-family: var(--fB);
+      line-height: 1.6;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    /* grain overlay */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 999;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+      opacity: .42;
+    }
+
+    /* ============================================================
+       TYPOGRAPHY
+    ============================================================ */
+    .d-xl {
+      font-family: var(--fH);
+      font-size: clamp(2.6rem, 7vw, 6rem);
+      font-weight: 700;
+      line-height: 1.06;
+      letter-spacing: -.03em;
+    }
+
+    .d-lg {
+      font-family: var(--fH);
+      font-size: clamp(1.9rem, 4vw, 3.5rem);
+      font-weight: 600;
+      line-height: 1.12;
+      letter-spacing: -.025em;
+    }
+
+    .d-md {
+      font-family: var(--fH);
+      font-size: clamp(1.55rem, 2.8vw, 2.5rem);
+      font-weight: 500;
+      line-height: 1.25;
+    }
+
+    .t-lg {
+      font-size: clamp(.9rem, 1.6vw, 1.05rem);
+      font-weight: 400;
+      line-height: 1.8;
+    }
+
+    .label {
+      font-size: .68rem;
+      font-weight: 600;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+    }
+
+    .grad-text {
+      background: var(--grad);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .tc {
+      color: var(--c1-lt);
+    }
+
+    .t2 {
+      color: var(--t2);
+    }
+
+    .t3 {
+      color: var(--t3);
+    }
+
+    /* ============================================================
+       LAYOUT — FULL-HEIGHT SLIDES
+    ============================================================ */
+    .wrap {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 44px;
+      width: 100%;
+    }
+
+    section {
+      position: relative;
+      overflow: hidden;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      scroll-snap-align: start;
+    }
+
+    .sec-inner {
+      width: 100%;
+      padding: 110px 0 100px;
+    }
+
+    .sec-label {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .sec-label::before {
+      content: '';
+      width: 26px;
+      height: 2px;
+      background: var(--grad);
+      flex-shrink: 0;
+    }
+
+    /* ============================================================
+       KEYFRAMES
+    ============================================================ */
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(42px)
+      }
+
+      to {
+        opacity: 1;
+        transform: none
+      }
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0
+      }
+
+      to {
+        opacity: 1
+      }
+    }
+
+    @keyframes floatY {
+
+      0%,
+      100% {
+        transform: translateY(0)
+      }
+
+      50% {
+        transform: translateY(-14px)
+      }
+    }
+
+    @keyframes orb1 {
+
+      0%,
+      100% {
+        transform: translate(0, 0) scale(1)
+      }
+
+      40% {
+        transform: translate(28px, -22px) scale(1.04)
+      }
+
+      70% {
+        transform: translate(-18px, 16px) scale(.97)
+      }
+    }
+
+    @keyframes orb2 {
+
+      0%,
+      100% {
+        transform: translate(0, 0) scale(1)
+      }
+
+      35% {
+        transform: translate(-24px, 28px) scale(1.03)
+      }
+
+      65% {
+        transform: translate(20px, -20px) scale(.96)
+      }
+    }
+
+    @keyframes glow {
+
+      0%,
+      100% {
+        box-shadow: 0 0 40px rgba(var(--c1-rgb), .14)
+      }
+
+      50% {
+        box-shadow: 0 0 80px rgba(var(--c1-rgb), .34)
+      }
+    }
+
+    @keyframes dot {
+
+      0%,
+      100% {
+        opacity: 1;
+        transform: scale(1)
+      }
+
+      50% {
+        opacity: .38;
+        transform: scale(.65)
+      }
+    }
+
+    @keyframes scrollL {
+
+      0%,
+      100% {
+        transform: scaleY(1);
+        opacity: 1
+      }
+
+      50% {
+        transform: scaleY(.45);
+        opacity: .3
+      }
+    }
+
+    @keyframes shim {
+      0% {
+        transform: translateX(-120%)
+      }
+
+      100% {
+        transform: translateX(220%)
+      }
+    }
+
+    @keyframes iconPop {
+      from {
+        opacity: 0;
+        transform: scale(.7)
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1)
+      }
+    }
+
+    /* scroll reveal */
+    .rv,
+    .rv-l,
+    .rv-r {
+      opacity: 0;
+      transition: opacity .88s cubic-bezier(.16, 1, .3, 1), transform .88s cubic-bezier(.16, 1, .3, 1);
+    }
+
+    .rv {
+      transform: translateY(50px);
+    }
+
+    .rv-l {
+      transform: translateX(-50px);
+    }
+
+    .rv-r {
+      transform: translateX(50px);
+    }
+
+    .rv.on,
+    .rv-l.on,
+    .rv-r.on {
+      opacity: 1;
+      transform: none;
+    }
+
+    [data-d="1"] {
+      transition-delay: .08s
+    }
+
+    [data-d="2"] {
+      transition-delay: .16s
+    }
+
+    [data-d="3"] {
+      transition-delay: .24s
+    }
+
+    [data-d="4"] {
+      transition-delay: .32s
+    }
+
+    [data-d="5"] {
+      transition-delay: .40s
+    }
+
+    [data-d="6"] {
+      transition-delay: .48s
+    }
+
+    /* ============================================================
+       NAV
+    ============================================================ */
+    #top-nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 44px;
+      transition: background .35s, border-color .35s;
+      border-bottom: 1px solid transparent;
+    }
+
+    #top-nav.stuck {
+      background: rgba(6, 10, 6, .92);
+      backdrop-filter: blur(26px) saturate(180%);
+      border-color: var(--border);
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+    }
+
+    .nav-mark {
+      width: 34px;
+      height: 34px;
+      border-radius: 9px;
+      background: var(--grad);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--fH);
+      font-size: 16px;
+      font-weight: 700;
+      font-style: italic;
+      color: #fff;
+    }
+
+    .nav-name {
+      font-family: var(--fH);
+      font-size: .98rem;
+      font-weight: 600;
+      font-style: italic;
+    }
+
+    .nav-sub {
+      font-size: .58rem;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--t3);
+      margin-top: 1px;
+    }
+
+    .nav-pills {
+      display: flex;
+      gap: 7px;
+      align-items: center;
+    }
+
+    .nav-pill {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, .13);
+      cursor: pointer;
+      transition: all .3s;
+    }
+
+    .nav-pill.active {
+      background: var(--c1-lt);
+      transform: scale(1.4);
+    }
+
+    /* side progress */
+    #side-p {
+      position: fixed;
+      right: 26px;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      gap: 11px;
+    }
+
+    .spi {
+      cursor: pointer;
+      opacity: .28;
+      transition: opacity .3s;
+    }
+
+    .spi.active {
+      opacity: 1;
+    }
+
+    .spi-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--c1-lt);
+      transition: all .3s;
+    }
+
+    .spi.active .spi-dot {
+      height: 20px;
+      border-radius: 3px;
+    }
+
+    /* keyboard hint */
+    #kb {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 18px;
+      background: rgba(255, 255, 255, .04);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      backdrop-filter: blur(12px);
+      font-size: .68rem;
+      color: var(--t3);
+      transition: opacity .6s;
+      white-space: nowrap;
+    }
+
+    #kb.gone {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .kk {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 20px;
+      height: 20px;
+      border: 1px solid rgba(255, 255, 255, .11);
+      border-radius: 4px;
+      font-size: .6rem;
+      color: var(--t2);
+      background: rgba(255, 255, 255, .05);
+    }
+
+    /* ============================================================
+       BUTTONS
+    ============================================================ */
+    .btn-p {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 14px 32px;
+      background: var(--grad);
+      border: none;
+      border-radius: 100px;
+      color: #fff;
+      font-family: var(--fB);
+      font-size: .9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform .22s, box-shadow .22s;
+      white-space: nowrap;
+      box-shadow: 0 10px 40px rgba(var(--c1-rgb), .24);
+    }
+
+    .btn-p:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 20px 60px rgba(var(--c1-rgb), .44);
+    }
+
+    .btn-s {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 14px 32px;
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      color: var(--t1);
+      font-family: var(--fB);
+      font-size: .9rem;
+      font-weight: 500;
+      cursor: pointer;
+      background: transparent;
+      transition: all .22s;
+      white-space: nowrap;
+    }
+
+    .btn-s:hover {
+      border-color: var(--c1-lt);
+      color: var(--c1-lt);
+    }
+
+    /* ============================================================
+       SVG ICON SYSTEM
+    ============================================================ */
+    .ico {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--c1-lt);
+    }
+
+    .ico svg {
+      display: block;
+    }
+
+    /* ============================================================
+       §1 HERO
+    ============================================================ */
+    #hero {
+      background: var(--bg0);
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+    }
+
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(100px);
+    }
+
+    .orb-a {
+      width: 680px;
+      height: 680px;
+      background: var(--c1);
+      top: -220px;
+      right: -120px;
+      opacity: .17;
+      animation: orb1 15s ease-in-out infinite;
+    }
+
+    .orb-b {
+      width: 560px;
+      height: 560px;
+      background: var(--c2);
+      bottom: -180px;
+      left: -120px;
+      opacity: .22;
+      animation: orb2 18s ease-in-out infinite;
+    }
+
+    .orb-c {
+      width: 340px;
+      height: 340px;
+      background: var(--c1);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      opacity: .07;
+      animation: orb1 24s ease-in-out infinite reverse;
+    }
+
+    .hero-grid {
+      position: absolute;
+      inset: 0;
+      background-image: linear-gradient(rgba(255, 255, 255, .016) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, .016) 1px, transparent 1px);
+      background-size: 80px 80px;
+      mask-image: radial-gradient(ellipse 70% 70% at 50% 50%, black, transparent);
+    }
+
+    .hero-inner {
+      position: relative;
+      z-index: 1;
+      max-width: 880px;
+      padding: 40px 28px;
+      text-align: center;
+    }
+
+    .hero-logo {
+      width: 80px;
+      height: 80px;
+      border-radius: 22px;
+      background: var(--grad);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 36px;
+      box-shadow: 0 20px 70px rgba(var(--c2-rgb), .5);
+      animation: fadeUp .8s cubic-bezier(.16, 1, .3, 1) .1s both;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-logo::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(110deg, transparent 25%, rgba(255, 255, 255, .18) 50%, transparent 75%);
+      animation: shim 2.6s ease-in-out infinite;
+    }
+
+    .hl-text {
+      font-family: var(--fH);
+      font-size: 2rem;
+      font-weight: 700;
+      font-style: italic;
+      color: #fff;
+      line-height: 1;
+    }
+
+    .hl-sub {
+      font-size: .38rem;
+      font-weight: 600;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, .6);
+      margin-top: 4px;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 20px;
+      border: 1px solid var(--border-c);
+      border-radius: 100px;
+      background: rgba(var(--c1-rgb), .1);
+      color: var(--c1-lt);
+      font-size: .68rem;
+      font-weight: 600;
+      letter-spacing: .13em;
+      text-transform: uppercase;
+      margin-bottom: 36px;
+      animation: fadeUp .8s cubic-bezier(.16, 1, .3, 1) .22s both;
+    }
+
+    .hero-badge-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--c1-lt);
+      animation: dot 2.2s ease-in-out infinite;
+    }
+
+    .hero-title {
+      margin-bottom: 26px;
+      animation: fadeUp .8s cubic-bezier(.16, 1, .3, 1) .36s both;
+    }
+
+    .hero-title .sub {
+      display: block;
+      font-family: var(--fH);
+      font-size: .5em;
+      font-weight: 400;
+      font-style: italic;
+      color: var(--t2);
+      margin-top: 10px;
+      letter-spacing: 0;
+    }
+
+    .hero-sub {
+      font-size: clamp(.92rem, 2vw, 1.15rem);
+      color: var(--t2);
+      max-width: 500px;
+      margin: 0 auto 52px;
+      line-height: 1.8;
+      animation: fadeUp .8s cubic-bezier(.16, 1, .3, 1) .48s both;
+    }
+
+    .hero-btns {
+      display: flex;
+      gap: 14px;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+      animation: fadeUp .8s cubic-bezier(.16, 1, .3, 1) .6s both;
+    }
+
+    .hero-strip {
+      position: absolute;
+      bottom: 88px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      white-space: nowrap;
+      animation: fadeIn 1s 1.1s both;
+    }
+
+    .hs-item {
+      font-size: .62rem;
+      font-weight: 600;
+      letter-spacing: .13em;
+      text-transform: uppercase;
+      color: var(--t3);
+    }
+
+    .hs-dot {
+      width: 3px;
+      height: 3px;
+      border-radius: 50%;
+      background: var(--c1);
+      opacity: .45;
+    }
+
+    .scroll-cue {
+      position: absolute;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      color: var(--t3);
+      font-size: .62rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      animation: fadeIn 1s 1s both;
+    }
+
+    .scroll-line {
+      width: 1px;
+      height: 40px;
+      background: linear-gradient(to bottom, var(--c1-lt), transparent);
+      animation: scrollL 1.7s ease-in-out infinite;
+    }
+
+    /* ============================================================
+       §2 OPPORTUNITY
+    ============================================================ */
+    #opportunity {
+      background: var(--bg1);
+      border-top: 1px solid var(--border);
+    }
+
+    .opp-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.15fr;
+      gap: 88px;
+      align-items: center;
+    }
+
+    .stat-stack {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .stat-row {
+      padding: 36px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .stat-row:first-child {
+      padding-top: 0;
+    }
+
+    .stat-row:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .stat-num {
+      font-family: var(--fH);
+      font-size: clamp(2.6rem, 5vw, 4.6rem);
+      font-weight: 700;
+      line-height: 1;
+      margin-bottom: 10px;
+      background: var(--grad);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .stat-txt {
+      font-size: .9rem;
+      color: var(--t2);
+      line-height: 1.6;
+      max-width: 250px;
+    }
+
+    .opp-text {
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+    }
+
+    .insight-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .insight-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      font-size: .9rem;
+      color: var(--t2);
+      line-height: 1.6;
+    }
+
+    .insight-list li::before {
+      content: '';
+      flex-shrink: 0;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--c1-lt);
+      margin-top: 9px;
+    }
+
+    .insight-list li strong {
+      color: var(--t1);
+      font-weight: 600;
+    }
+
+    /* ============================================================
+       §3 SHOWCASE
+    ============================================================ */
+    #showcase {
+      background: var(--bg0);
+    }
+
+    .showcase-head {
+      text-align: center;
+      max-width: 640px;
+      margin: 0 auto 72px;
+    }
+
+    .showcase-head .d-lg {
+      margin-bottom: 14px;
+    }
+
+    .phones-row {
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      gap: 20px;
+      padding: 30px 0 0;
+    }
+
+    .phone {
+      width: 224px;
+      height: 466px;
+      flex-shrink: 0;
+      background: #090e09;
+      border-radius: 46px;
+      border: 2px solid rgba(255, 255, 255, .1);
+      box-shadow: 0 48px 100px rgba(0, 0, 0, .75), 0 0 0 1px rgba(255, 255, 255, .05), inset 0 0 0 1px rgba(255, 255, 255, .03);
+      position: relative;
+      overflow: hidden;
+      transition: transform .4s cubic-bezier(.16, 1, .3, 1), box-shadow .4s;
+    }
+
+    .phone:hover {
+      box-shadow: 0 60px 120px rgba(0, 0, 0, .8), 0 0 70px rgba(var(--c1-rgb), .22);
+    }
+
+    .phone.ctr {
+      width: 256px;
+      height: 528px;
+      z-index: 2;
+      animation: floatY 5s ease-in-out infinite;
+    }
+
+    .phone.lft {
+      transform: rotate(-6deg) translateX(14px);
+      opacity: .8;
+    }
+
+    .phone.rgt {
+      transform: rotate(6deg) translateX(-14px);
+      opacity: .8;
+    }
+
+    .phone.lft:hover {
+      transform: rotate(-2deg) translateX(7px) translateY(-10px);
+      opacity: 1;
+    }
+
+    .phone.rgt:hover {
+      transform: rotate(2deg) translateX(-7px) translateY(-10px);
+      opacity: 1;
+    }
+
+    .phone.ctr:hover {
+      animation-play-state: paused;
+      transform: translateY(-14px);
+    }
+
+    .phone.ctr::before {
+      content: '';
+      position: absolute;
+      inset: -2px;
+      border-radius: 48px;
+      background: var(--grad);
+      opacity: .32;
+      z-index: -1;
+      filter: blur(8px);
+    }
+
+    .pill {
+      position: absolute;
+      top: 13px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 92px;
+      height: 27px;
+      background: #000;
+      border-radius: 20px;
+      z-index: 10;
+    }
+
+    .screen {
+      position: absolute;
+      inset: 7px;
+      border-radius: 40px;
+      overflow: hidden;
+    }
+
+    .screen img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top;
+      display: block;
+    }
+
+    .phone-cap {
+      text-align: center;
+      margin-top: 20px;
+      font-size: .8rem;
+      color: var(--t2);
+      font-weight: 500;
+    }
+
+    .phone-cap.main {
+      color: var(--c1-lt);
+      font-weight: 600;
+    }
+
+    .callouts {
+      display: flex;
+      justify-content: center;
+      gap: 48px;
+      margin-top: 52px;
+      flex-wrap: wrap;
+    }
+
+    .callout {
+      text-align: center;
+      max-width: 180px;
+    }
+
+    .callout-lbl {
+      font-size: .66rem;
+      letter-spacing: .13em;
+      text-transform: uppercase;
+      color: var(--c1-lt);
+      margin-bottom: 6px;
+    }
+
+    .callout-txt {
+      font-size: .8rem;
+      color: var(--t2);
+      line-height: 1.55;
+    }
+
+    /* ============================================================
+       §4 FEATURES
+    ============================================================ */
+    #features {
+      background: var(--bg1);
+      border-top: 1px solid var(--border);
+    }
+
+    .feat-head {
+      text-align: center;
+      max-width: 640px;
+      margin: 0 auto 72px;
+    }
+
+    .feat-head .d-lg {
+      margin-bottom: 14px;
+    }
+
+    .feat-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .feat-card {
+      padding: 32px 26px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      position: relative;
+      overflow: hidden;
+      transition: transform .32s cubic-bezier(.16, 1, .3, 1), border-color .3s, background .3s;
+      cursor: default;
+    }
+
+    .feat-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--grad-s);
+      opacity: 0;
+      transition: opacity .3s;
+    }
+
+    .feat-card::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--grad);
+      opacity: 0;
+      transition: opacity .3s;
+    }
+
+    .feat-card:hover {
+      transform: translateY(-7px);
+      border-color: var(--border-c);
+      background: var(--card-h);
+    }
+
+    .feat-card:hover::before {
+      opacity: 1;
+    }
+
+    .feat-card:hover::after {
+      opacity: 1;
+    }
+
+    .fi-icon-wrap {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      background: var(--grad-s);
+      border: 1px solid var(--border-c);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 22px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .fi-title {
+      font-family: var(--fH);
+      font-size: 1.08rem;
+      font-weight: 600;
+      margin-bottom: 10px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .fi-desc {
+      font-size: .84rem;
+      color: var(--t2);
+      line-height: 1.65;
+      margin-bottom: 18px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .fi-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .fi-list li {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: .78rem;
+      color: var(--t2);
+      line-height: 1.4;
+    }
+
+    .fi-list li::before {
+      content: '→';
+      color: var(--c1-lt);
+      font-size: .75rem;
+      flex-shrink: 0;
+    }
+
+    /* ============================================================
+       §5 IMPACT
+    ============================================================ */
+    #impact {
+      background: var(--bg0);
+      border-top: 1px solid var(--border);
+    }
+
+    .imp-head {
+      text-align: center;
+      max-width: 640px;
+      margin: 0 auto 72px;
+    }
+
+    .imp-head .d-lg {
+      margin-bottom: 14px;
+    }
+
+    .imp-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2px;
+      background: var(--border);
+      border-radius: 22px;
+      overflow: hidden;
+      margin-bottom: 2px;
+    }
+
+    .imp-block {
+      padding: 48px 42px;
+      background: var(--bg1);
+      position: relative;
+      overflow: hidden;
+      transition: background .3s;
+    }
+
+    .imp-block:hover {
+      background: var(--bg2);
+    }
+
+    .imp-block::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--grad);
+      opacity: 0;
+      transition: opacity .3s;
+    }
+
+    .imp-block:hover::after {
+      opacity: 1;
+    }
+
+    .imp-num {
+      font-family: var(--fH);
+      font-size: clamp(1.8rem, 3vw, 2.8rem);
+      font-weight: 700;
+      line-height: 1;
+      background: var(--grad);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 10px;
+    }
+
+    .imp-title {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    .imp-desc {
+      font-size: .84rem;
+      color: var(--t2);
+      line-height: 1.65;
+    }
+
+    .imp-tag {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 20px;
+      padding-top: 18px;
+      border-top: 1px solid var(--border);
+      font-size: .78rem;
+    }
+
+    .imp-tag strong {
+      color: var(--c1-lt);
+    }
+
+    .imp-tag span {
+      color: var(--t3);
+    }
+
+    .imp-grid-sm {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2px;
+      background: var(--border);
+      border-radius: 22px;
+      overflow: hidden;
+    }
+
+    /* ============================================================
+       §6 WHY GOLDBEANS
+    ============================================================ */
+    #why {
+      background: var(--bg1);
+      border-top: 1px solid var(--border);
+    }
+
+    .why-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 90px;
+      align-items: center;
+    }
+
+    .cust-list {
+      display: flex;
+      flex-direction: column;
+      gap: 13px;
+    }
+
+    .cust-item {
+      display: flex;
+      gap: 16px;
+      padding: 20px 22px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      transition: all .3s;
+      align-items: flex-start;
+    }
+
+    .cust-item:hover {
+      border-color: var(--border-c);
+      background: var(--card-h);
+    }
+
+    .ci-icon-wrap {
+      width: 40px;
+      height: 40px;
+      min-width: 40px;
+      border-radius: 11px;
+      background: var(--grad-s);
+      border: 1px solid var(--border-c);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 2px;
+    }
+
+    .ci-title {
+      font-size: .9rem;
+      font-weight: 600;
+      margin-bottom: 3px;
+    }
+
+    .ci-desc {
+      font-size: .79rem;
+      color: var(--t2);
+      line-height: 1.55;
+    }
+
+    .brand-cards {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .brand-card {
+      padding: 26px 28px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .brand-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2.5px;
+      background: var(--grad);
+    }
+
+    .bc-label {
+      font-size: .65rem;
+      font-weight: 600;
+      letter-spacing: .13em;
+      text-transform: uppercase;
+      color: var(--t3);
+      margin-bottom: 13px;
+    }
+
+    .swatches {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .swatch {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+    }
+
+    .swatch-note {
+      font-size: .78rem;
+      color: var(--t2);
+      margin-left: 4px;
+    }
+
+    .app-preview {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .app-ico {
+      width: 52px;
+      height: 52px;
+      border-radius: 15px;
+      background: var(--grad);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--fH);
+      font-size: 1.3rem;
+      font-weight: 700;
+      font-style: italic;
+      color: #fff;
+      box-shadow: 0 8px 28px rgba(var(--c2-rgb), .4);
+    }
+
+    /* ============================================================
+       §7 PRICING
+    ============================================================ */
+    #pricing {
+      background: var(--bg0);
+      border-top: 1px solid var(--border);
+    }
+
+    .pricing-head {
+      text-align: center;
+      max-width: 640px;
+      margin: 0 auto 72px;
+    }
+
+    .pricing-head .d-lg {
+      margin-bottom: 14px;
+    }
+
+    .pricing-wrap {
+      max-width: 920px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1.5fr;
+      gap: 26px;
+      align-items: start;
+    }
+
+    .pricing-ctx {
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+    }
+
+    .pctx-intro h3 {
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    .pctx-intro p {
+      font-size: .84rem;
+      color: var(--t2);
+      line-height: 1.7;
+    }
+
+    .pctx-item {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .pctx-lbl {
+      font-size: .64rem;
+      font-weight: 600;
+      letter-spacing: .13em;
+      text-transform: uppercase;
+      color: var(--t3);
+    }
+
+    .pctx-val {
+      font-size: .9rem;
+      font-weight: 500;
+    }
+
+    .pricing-card {
+      padding: 44px;
+      background: var(--card);
+      border: 1px solid var(--border-c);
+      border-radius: 26px;
+      position: relative;
+      overflow: hidden;
+      animation: glow 3.4s ease-in-out infinite;
+    }
+
+    .pricing-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: var(--grad);
+    }
+
+    .pc-badge {
+      display: inline-flex;
+      padding: 6px 15px;
+      background: rgba(var(--c1-rgb), .12);
+      border: 1px solid var(--border-c);
+      border-radius: 100px;
+      color: var(--c1-lt);
+      font-size: .66rem;
+      font-weight: 600;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      margin-bottom: 28px;
+    }
+
+    .price-block {
+      margin-bottom: 6px;
+    }
+
+    .price-row {
+      display: flex;
+      align-items: flex-end;
+      gap: 4px;
+    }
+
+    .pr-sym {
+      font-size: 1.3rem;
+      font-weight: 500;
+      color: var(--c1-lt);
+      margin-bottom: 6px;
+    }
+
+    .pr-amt {
+      font-family: var(--fH);
+      font-size: 3.6rem;
+      font-weight: 700;
+      line-height: 1;
+      background: var(--grad);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .pr-label {
+      font-size: .75rem;
+      font-weight: 600;
+      color: var(--c1-lt);
+      letter-spacing: .06em;
+      margin-bottom: 8px;
+      margin-left: 8px;
+      padding: 4px 10px;
+      background: rgba(var(--c1-rgb), .12);
+      border-radius: 100px;
+      border: 1px solid var(--border-c);
+      align-self: center;
+    }
+
+    .pr-sub {
+      font-size: .8rem;
+      color: var(--t2);
+      margin-top: 6px;
+    }
+
+    .pr-sub2 {
+      font-size: .75rem;
+      color: var(--t3);
+      margin-top: 3px;
+    }
+
+    .pr-tier-label {
+      font-size: .62rem;
+      font-weight: 600;
+      letter-spacing: .13em;
+      text-transform: uppercase;
+      color: var(--t3);
+      margin-bottom: 10px;
+    }
+
+    .pr-extra-row {
+      display: flex;
+      gap: 0;
+      margin-top: 20px;
+      background: rgba(var(--c1-rgb), .07);
+      border: 1px solid var(--border-c);
+      border-radius: 14px;
+      overflow: hidden;
+    }
+
+    .pr-extra-item {
+      flex: 1;
+      padding: 14px 18px;
+    }
+
+    .pr-extra-sep {
+      width: 1px;
+      background: var(--border-c);
+      flex-shrink: 0;
+    }
+
+    .pr-extra-lbl {
+      font-size: .62rem;
+      font-weight: 600;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--t3);
+      margin-bottom: 6px;
+    }
+
+    .pr-extra-val {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--t1);
+      display: flex;
+      align-items: baseline;
+      gap: 5px;
+    }
+
+    .pr-extra-tag {
+      font-size: .68rem;
+      font-weight: 500;
+      color: var(--c1-lt);
+    }
+
+    .pc-div {
+      height: 1px;
+      background: var(--border);
+      margin: 26px 0;
+    }
+
+    .pc-feats {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 13px;
+      margin-bottom: 30px;
+    }
+
+    .pc-feats li {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      font-size: .86rem;
+      color: var(--t2);
+    }
+
+    .chk {
+      width: 19px;
+      height: 19px;
+      min-width: 19px;
+      border-radius: 50%;
+      background: rgba(var(--c1-rgb), .15);
+      border: 1px solid var(--border-c);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--c1-lt);
+      font-size: 9px;
+    }
+
+    .pc-note {
+      font-size: .74rem;
+      color: var(--t3);
+      text-align: center;
+      margin-top: 16px;
+    }
+
+    /* competitor comparison */
+    .comp-compare {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 15px 18px;
+      margin-bottom: 26px;
+      background: rgba(220, 60, 60, .05);
+      border: 1px solid rgba(220, 60, 60, .18);
+      border-radius: 14px;
+    }
+
+    .cc-left {
+      flex: 1;
+    }
+
+    .cc-lbl {
+      font-size: .58rem;
+      font-weight: 600;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--t3);
+      margin-bottom: 5px;
+    }
+
+    .cc-struck {
+      display: flex;
+      align-items: baseline;
+      gap: 3px;
+      font-family: var(--fH);
+      font-weight: 700;
+      color: rgba(255, 255, 255, .22);
+      text-decoration: line-through;
+      text-decoration-color: rgba(220, 60, 60, .65);
+      text-decoration-thickness: 2px;
+    }
+
+    .cc-struck-sym {
+      font-size: 1rem;
+    }
+
+    .cc-struck-num {
+      font-size: 1.55rem;
+      line-height: 1;
+    }
+
+    .cc-struck-sfx {
+      font-size: .78rem;
+      font-family: var(--fB);
+      font-weight: 500;
+      opacity: .7;
+    }
+
+    .cc-arrow {
+      color: var(--t3);
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+
+    .cc-save {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+
+    .cc-save-badge {
+      padding: 5px 12px;
+      background: rgba(var(--c1-rgb), .15);
+      border: 1px solid var(--border-c);
+      border-radius: 100px;
+      font-size: .68rem;
+      font-weight: 600;
+      color: var(--c1-lt);
+      letter-spacing: .04em;
+      white-space: nowrap;
+    }
+
+    .cc-save-note {
+      font-size: .58rem;
+      color: var(--t3);
+      white-space: nowrap;
+    }
+
+    /* divider */
+    .div-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      margin-top: 60px;
+    }
+
+    .div-line {
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .div-mark {
+      font-family: var(--fH);
+      font-size: .7rem;
+      font-style: italic;
+      color: var(--t3);
+      letter-spacing: .05em;
+      white-space: nowrap;
+    }
+
+    /* ============================================================
+       RESPONSIVE
+    ============================================================ */
+    @media(max-width:960px) {
+      .wrap {
+        padding: 0 24px;
+      }
+
+      .sec-inner {
+        padding: 90px 0;
+      }
+
+      .opp-grid,
+      .why-grid {
+        grid-template-columns: 1fr;
+        gap: 48px;
+      }
+
+      .feat-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .imp-grid,
+      .imp-grid-sm {
+        grid-template-columns: 1fr;
+      }
+
+      .pricing-wrap {
+        grid-template-columns: 1fr;
+      }
+
+      .pricing-card {
+        padding: 28px 22px;
+      }
+
+      .pr-amt {
+        font-size: clamp(2.2rem, 9vw, 3.6rem);
+      }
+
+      .comp-compare {
+        padding: 12px 14px;
+        gap: 10px;
+      }
+
+      .cc-struck-num {
+        font-size: 1.25rem;
+      }
+
+      .cc-save-badge {
+        font-size: .62rem;
+        padding: 4px 10px;
+      }
+
+      #side-p {
+        display: none;
+      }
+
+      .nav-pills {
+        display: none;
+      }
+
+      .phones-row {
+        gap: 10px;
+        align-items: center;
+      }
+
+      .phones-row .phone.lft,
+      .phones-row .phone.rgt {
+        display: block;
+        opacity: 1;
+        transform: none !important;
+      }
+
+      .phones-row .phone.lft:hover,
+      .phones-row .phone.rgt:hover {
+        transform: translateY(-6px) !important;
+      }
+
+      .phones-row .phone {
+        width: clamp(90px, 27vw, 190px);
+        height: clamp(187px, 56vw, 395px);
+        border-radius: 28px;
+      }
+
+      .phones-row .phone.ctr {
+        width: clamp(104px, 31vw, 218px);
+        height: clamp(216px, 64vw, 453px);
+        animation: none;
+      }
+
+      .phones-row .phone .pill {
+        width: clamp(52px, 16vw, 92px);
+        height: clamp(16px, 5vw, 27px);
+      }
+
+      .phones-row .phone .screen {
+        inset: 5px;
+        border-radius: 24px;
+      }
+    }
+
+    @media(max-width:600px) {
+      .feat-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .phones-row {
+        gap: 6px;
+      }
+
+      .phones-row .phone {
+        width: clamp(80px, 26vw, 110px);
+        height: clamp(166px, 54vw, 229px);
+        border-radius: 22px;
+      }
+
+      .phones-row .phone.ctr {
+        width: clamp(92px, 30vw, 126px);
+        height: clamp(191px, 62vw, 262px);
+      }
+
+      .phones-row .phone .screen {
+        inset: 4px;
+        border-radius: 18px;
+      }
+
+      .phone .screen {
+        border-radius: 18px;
+      }
+
+      .hero-btns {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .hero-btns .btn-p,
+      .hero-btns .btn-s {
+        justify-content: center;
+      }
+
+      .callouts {
+        flex-direction: column;
+        align-items: center;
+        gap: 24px;
+      }
+
+      .showcase-head {
+        margin-bottom: 48px;
+      }
+
+      .pricing-card {
+        padding: 22px 16px;
+      }
+
+      .pr-amt {
+        font-size: clamp(2rem, 11vw, 2.8rem);
+      }
+
+      .price-row {
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .pr-label {
+        margin-left: 0;
+        margin-top: 2px;
+        font-size: .68rem;
+      }
+
+      .comp-compare {
+        flex-direction: column;
+        gap: 8px;
+        padding: 12px 14px;
+      }
+
+      .cc-arrow {
+        display: none;
+      }
+
+      .cc-save {
+        flex-direction: row;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .pc-feats li {
+        font-size: .8rem;
+      }
+
+      .pr-extra-val {
+        font-size: .9rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ── NAV ─────────────────────────────────────────────── -->
+  <nav id="top-nav">
+    <div class="nav-logo">
+      <div class="nav-mark">G</div>
+      <div>
+        <div class="nav-name">Goldbeans</div>
+        <div class="nav-sub">Specialty Coffee</div>
+      </div>
+    </div>
+    <div class="nav-pills" id="navPills">
+      <div class="nav-pill active" data-s="0"></div>
+      <div class="nav-pill" data-s="1"></div>
+      <div class="nav-pill" data-s="2"></div>
+      <div class="nav-pill" data-s="3"></div>
+      <div class="nav-pill" data-s="4"></div>
+      <div class="nav-pill" data-s="5"></div>
+      <div class="nav-pill" data-s="6"></div>
+    </div>
+  </nav>
+
+  <!-- ── SIDE PROGRESS ────────────────────────────────────── -->
+  <div id="side-p">
+    <div class="spi active" data-s="0">
+      <div class="spi-dot"></div>
+    </div>
+    <div class="spi" data-s="1">
+      <div class="spi-dot"></div>
+    </div>
+    <div class="spi" data-s="2">
+      <div class="spi-dot"></div>
+    </div>
+    <div class="spi" data-s="3">
+      <div class="spi-dot"></div>
+    </div>
+    <div class="spi" data-s="4">
+      <div class="spi-dot"></div>
+    </div>
+    <div class="spi" data-s="5">
+      <div class="spi-dot"></div>
+    </div>
+    <div class="spi" data-s="6">
+      <div class="spi-dot"></div>
+    </div>
+  </div>
+
+  <!-- ── KEYBOARD HINT ────────────────────────────────────── -->
+  <div id="kb">
+    <span class="kk">↑</span><span class="kk">↓</span>
+    <span style="margin:0 5px">Bölümler arası geçiş</span>
+  </div>
+
+
+  <!-- ════════════════════════════════════════════════════════
+     §1 · HERO
+════════════════════════════════════════════════════════ -->
+  <section id="hero" data-section="0">
+    <div class="hero-bg">
+      <div class="orb orb-a"></div>
+      <div class="orb orb-b"></div>
+      <div class="orb orb-c"></div>
+      <div class="hero-grid"></div>
+    </div>
+
+    <div class="hero-inner">
+      <div class="hero-logo">
+        <div class="hl-text">G</div>
+        <div class="hl-sub">Coffee</div>
+      </div>
+
+      <div class="hero-badge">
+        <div class="hero-badge-dot"></div>
+        Dijital Sadakat Sistemi &nbsp;·&nbsp; Goldbeans için Hazırlandı
+      </div>
+
+      <h1 class="d-xl hero-title">
+        <span class="grad-text" style="font-style:italic">Her Yudumda</span><br>
+        <span>Sadakat Kazanılır.</span>
+        <span class="sub">Müşterilerinizi her gün geri getiren dijital sistem.</span>
+      </h1>
+
+      <p class="hero-sub">
+        Goldbeans'in kalitesini dijitale taşıyan,<br>
+        her ziyareti alışkanlığa dönüştüren<br>
+        özel mobil sadakat deneyimi.
+      </p>
+
+      <div class="hero-btns">
+        <a href="#opportunity" class="btn-p">Keşfet &nbsp;→</a>
+        <a href="#features" class="btn-s">Modüller</a>
+      </div>
+    </div>
+
+    <div class="hero-strip">
+      <span class="hs-item">Specialty Coffee</span>
+      <span class="hs-dot"></span>
+      <span class="hs-item">Goldbeans</span>
+      <span class="hs-dot"></span>
+      <span class="hs-item">Dijital Büyüme Sistemi</span>
+    </div>
+
+    <div class="scroll-cue">
+      <div class="scroll-line"></div>
+      <span>Aşağı kaydır</span>
+    </div>
+  </section>
+
+
+  <!-- ════════════════════════════════════════════════════════
+     §2 · FIRSAT
+════════════════════════════════════════════════════════ -->
+  <section id="opportunity" data-section="1">
+    <div class="wrap">
+      <div class="sec-inner">
+        <div class="opp-grid">
+
+          <div class="stat-stack">
+            <div class="stat-row rv">
+              <div class="stat-num">× 5</div>
+              <div class="stat-txt">Yeni müşteri kazanmak, mevcut müşteriyi elde tutmaktan 5 kat daha maliyetlidir.
+              </div>
+            </div>
+            <div class="stat-row rv" data-d="2">
+              <div class="stat-num">% 67</div>
+              <div class="stat-txt">Sadık müşteriler yeni müşterilere kıyasla ortalama %67 daha fazla harcama yapar.
+              </div>
+            </div>
+            <div class="stat-row rv" data-d="3">
+              <div class="stat-num">% 70</div>
+              <div class="stat-txt">İşletmelerin %70'i müşteri kaybının gerçek nedenini bilmiyor.</div>
+            </div>
+          </div>
+
+          <div class="opp-text rv-r">
+            <div>
+              <div class="sec-label"><span class="label tc">Fırsat</span></div>
+              <h2 class="d-md" style="margin-bottom:22px; line-height:1.3">
+                İyi bir kahve<br>insanı getirir.<br>
+                Onu geri getiren ise<br>
+                <em>başka bir şeydir.</em>
+              </h2>
+              <p class="t-lg t2">
+                Goldbeans'in fincanından yükselen her aroması bir müşteri hikâyesi başlatıyor. Bu sistemi dijitale
+                taşıdığınızda o hikâye bitmez — <strong>tekrar başlar.</strong>
+              </p>
+            </div>
+            <ul class="insight-list">
+              <li>Fiziksel damga kartları kaybolur, dijital sadakat sistemi kalır</li>
+              <li>Push bildirimle "Bugünün özel karışımı hazır!" duyurusu anlık ziyaret yaratır</li>
+              <li>Sabah rutinine giren müşteri, Goldbeans'i günlük alışkanlık haline getirir</li>
+              <li>Veriye dayalı kararlar: hangi ürün ne zaman satar — her şey görünür olur</li>
+              <li>Goldbeans bu sistemle <strong>dijital bir sadakat markasına</strong> dönüşüyor</li>
+            </ul>
+          </div>
+
+        </div>
+
+        <div class="div-row rv" data-d="5">
+          <div class="div-line"></div>
+          <div class="div-mark">Goldbeans · Specialty Coffee</div>
+          <div class="div-line"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ════════════════════════════════════════════════════════
+     §3 · UYGULAMA SHOWCASE
+════════════════════════════════════════════════════════ -->
+  <section id="showcase" data-section="2">
+    <div class="wrap">
+      <div class="sec-inner">
+        <div class="showcase-head">
+          <div class="sec-label" style="justify-content:center;margin-bottom:14px">
+            <span class="label tc">Uygulama Deneyimi</span>
+          </div>
+          <h2 class="d-lg rv">Goldbeans Uygulaması</h2>
+          <p class="t2 rv" data-d="1" style="margin-top:14px">
+            Markanızın renkleriyle, ürünlerinizle ve sadakat mekaniğinizle özelleştirilmiş — gerçek uygulama ekranları.
+          </p>
+        </div>
+
+        <div class="phones-row">
+          <div class="rv-l" style="display:flex;flex-direction:column;align-items:center">
+            <div class="phone lft">
+              <div class="pill"></div>
+              <div class="screen"><img src="screen2.png" alt="Rozetler" /></div>
+            </div>
+            <div class="phone-cap">Rozetler &amp; Ödüller</div>
+          </div>
+
+          <div class="rv" style="display:flex;flex-direction:column;align-items:center">
+            <div class="phone ctr">
+              <div class="pill"></div>
+              <div class="screen"><img src="screen.png" alt="Ana Ekran" /></div>
+            </div>
+            <div class="phone-cap main">Ana Ekran</div>
+          </div>
+
+          <div class="rv-r" style="display:flex;flex-direction:column;align-items:center">
+            <div class="phone rgt">
+              <div class="pill"></div>
+              <div class="screen"><img src="screen4.png" alt="Menü" /></div>
+            </div>
+            <div class="phone-cap">Menü &amp; Ürünler</div>
+          </div>
+        </div>
+
+        <div class="callouts rv" data-d="2">
+          <div class="callout">
+            <div class="callout-lbl">Sadakat Kartı</div>
+            <div class="callout-txt">5 damga — bedava kahve sistemi ile müşteriyi bağla</div>
+          </div>
+          <div class="callout">
+            <div class="callout-lbl">Rozet Sistemi</div>
+            <div class="callout-txt">"Kahve Ustası", "Sabah Kahvesi" — markayla duygusal bağ</div>
+          </div>
+          <div class="callout">
+            <div class="callout-lbl">Dijital Menü</div>
+            <div class="callout-txt">Günlük özel kahveler ve sezonluk içecekler bir tıkta</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ════════════════════════════════════════════════════════
+     §4 · MODÜLLER
+════════════════════════════════════════════════════════ -->
+  <section id="features" data-section="3">
+    <div class="wrap">
+      <div class="sec-inner">
+        <div class="feat-head">
+          <div class="sec-label" style="justify-content:center;margin-bottom:14px">
+            <span class="label tc">6 Ana Modül</span>
+          </div>
+          <h2 class="d-lg rv" style="margin-bottom:14px">Her biri bir büyüme aracı</h2>
+          <p class="t2 rv" data-d="1">Uygulamanın her modülü, Goldbeans'e somut ve ölçülebilir bir fayda sağlamak için
+            tasarlandı.</p>
+        </div>
+
+        <div class="feat-grid">
+
+          <!-- QR -->
+          <div class="feat-card rv" data-d="1">
+            <div class="fi-icon-wrap">
+              <span class="ico">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="3" width="7" height="7" rx="1.5" />
+                  <rect x="14" y="3" width="7" height="7" rx="1.5" />
+                  <rect x="3" y="14" width="7" height="7" rx="1.5" />
+                  <rect x="5.5" y="5.5" width="2" height="2" fill="currentColor" stroke="none" rx=".3" />
+                  <rect x="16.5" y="5.5" width="2" height="2" fill="currentColor" stroke="none" rx=".3" />
+                  <rect x="5.5" y="16.5" width="2" height="2" fill="currentColor" stroke="none" rx=".3" />
+                  <path d="M14 14h2.5m4 0v2.5M20.5 20.5h-5v-4h2" />
+                </svg>
+              </span>
+            </div>
+            <div class="fi-title">QR Sadakat Sistemi</div>
+            <p class="fi-desc">Her alışverişte QR okutma ile işleyen dijital sadakat sistemi — espresso, filtre kahve,
+              latte, hepsi sayılır.</p>
+            <ul class="fi-list">
+              <li>X kahve al, 1 bedava sistemi</li>
+              <li>Fiziksel damga kart dönemi bitiyor</li>
+              <li>Müşteri geri dönüş oranı artar</li>
+            </ul>
+          </div>
+
+          <!-- Kampanya -->
+          <div class="feat-card rv" data-d="2">
+            <div class="fi-icon-wrap">
+              <span class="ico">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="9" />
+                  <circle cx="12" cy="12" r="5.5" />
+                  <circle cx="12" cy="12" r="2" fill="currentColor" stroke="none" />
+                  <line x1="12" y1="3" x2="12" y2="6.5" />
+                  <line x1="12" y1="17.5" x2="12" y2="21" />
+                  <line x1="3" y1="12" x2="6.5" y2="12" />
+                  <line x1="17.5" y1="12" x2="21" y2="12" />
+                </svg>
+              </span>
+            </div>
+            <div class="fi-title">Kampanya Motoru</div>
+            <p class="fi-desc">Sabah Serisi, Happy Hour ve özel gün kampanyaları — tümü otomatik, tümü hedefli.</p>
+            <ul class="fi-list">
+              <li>Sabah saatlerine özel teklifler</li>
+              <li>Hafta sonu / özel gün otomasyonu</li>
+              <li>Düşük saatlerde müşteri çekme</li>
+            </ul>
+          </div>
+
+          <!-- Profil -->
+          <div class="feat-card rv" data-d="3">
+            <div class="fi-icon-wrap">
+              <span class="ico">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="7.5" r="4" />
+                  <path d="M4 20c0-3.87 3.58-7 8-7s8 3.13 8 7" />
+                </svg>
+              </span>
+            </div>
+            <div class="fi-title">Kullanıcı Profili</div>
+            <p class="fi-desc">Hangi kahveyi seviyor, ne zaman geliyor — her müşteriyi tanı, kişiye özel deneyim sun.
+            </p>
+            <ul class="fi-list">
+              <li>Sipariş geçmişi ve favoriler</li>
+              <li>Kişiye özel ürün önerileri</li>
+              <li>Doğru kampanya hedefleme</li>
+            </ul>
+          </div>
+
+          <!-- Push -->
+          <div class="feat-card rv" data-d="4">
+            <div class="fi-icon-wrap">
+              <span class="ico">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                  <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+                  <circle cx="18" cy="5" r="3" fill="currentColor" stroke="none" />
+                </svg>
+              </span>
+            </div>
+            <div class="fi-title">Push Bildirim Sistemi</div>
+            <p class="fi-desc">Müşterinizle sürekli iletişimde kal — tam doğru anda, doğru mesajı gönder.</p>
+            <ul class="fi-list">
+              <li>Anlık ürün ve kampanya duyuruları</li>
+              <li>Ödül hatırlatmaları</li>
+              <li>Anlık müşteri geri dönüşü</li>
+            </ul>
+          </div>
+
+          <!-- Lokasyon -->
+          <div class="feat-card rv" data-d="5">
+            <div class="fi-icon-wrap">
+              <span class="ico">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0Z" />
+                  <circle cx="12" cy="10" r="3" />
+                </svg>
+              </span>
+            </div>
+            <div class="fi-title">Lokasyon Bazlı Kampanya</div>
+            <p class="fi-desc">Müşteri Goldbeans'e yaklaştığında otomatik teklif — yakınından geçeni içeri çek.</p>
+            <ul class="fi-list">
+              <li>Coğrafi tetikleyici bildirimler</li>
+              <li>"Yakındasın — özel kahven seni bekliyor"</li>
+              <li>Anlık satış artırma</li>
+            </ul>
+          </div>
+
+          <!-- Gamification -->
+          <div class="feat-card rv" data-d="6">
+            <div class="fi-icon-wrap">
+              <span class="ico">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" />
+                  <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" />
+                  <path d="M4 22h16" />
+                  <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22" />
+                  <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22" />
+                  <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z" />
+                </svg>
+              </span>
+            </div>
+            <div class="fi-title">Gamification</div>
+            <p class="fi-desc">"Kahve Ustası", "Sabahın Kahramanı", "Gurme Koleksiyoncusu" — rozet ve ünvan mekaniği
+              markayla bağ kurar.</p>
+            <ul class="fi-list">
+              <li>Mevsimsel rozet koleksiyonları</li>
+              <li>Altın statü ve VIP ayrıcalıkları</li>
+              <li>Müşteri bağlılığı ve etkileşim artar</li>
+            </ul>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ════════════════════════════════════════════════════════
+     §5 · İŞ ETKİSİ
+════════════════════════════════════════════════════════ -->
+  <section id="impact" data-section="4">
+    <div class="wrap">
+      <div class="sec-inner">
+        <div class="imp-head">
+          <div class="sec-label" style="justify-content:center;margin-bottom:14px">
+            <span class="label tc">İş Etkisi</span>
+          </div>
+          <h2 class="d-lg rv" style="margin-bottom:14px">Goldbeans'e ne kazandırır?</h2>
+          <p class="t2 rv" data-d="1">Her modül somut bir iş sonucuna bağlı. Sezgi değil, sistem.</p>
+        </div>
+
+        <div class="imp-grid">
+          <div class="imp-block rv">
+            <div class="imp-num">↑ Gelir</div>
+            <div class="imp-title">Satış Hacmi Artışı</div>
+            <div class="imp-desc">Sadakat sistemi tekrar ziyareti artırır. Kampanyalar sabah trafiğini optimize eder.
+              Push bildirimler anlık satış üretir.</div>
+            <div class="imp-tag"><strong>Günlük &amp; aylık ciro</strong><span>&nbsp;→ Ortalama sepet tutarı
+                yükselir</span></div>
+          </div>
+          <div class="imp-block rv" data-d="2">
+            <div class="imp-num">↑ Bağlılık</div>
+            <div class="imp-title">Müşteri Sadakati</div>
+            <div class="imp-desc">Damga sistemi, rozet mekaniği ve kişisel deneyim müşteriyi rakip kafeden değil,
+              Goldbeans'ten içtiriyor.</div>
+            <div class="imp-tag"><strong>Düzenli müşteri kitlesi</strong><span>&nbsp;→ Rakibe gitme oranı düşer</span>
+            </div>
+          </div>
+          <div class="imp-block rv" data-d="3">
+            <div class="imp-num">↑ Veri</div>
+            <div class="imp-title">Veri Odaklı Karar Alma</div>
+            <div class="imp-desc">Hangi kahve ne zaman satar, en yoğun gün ve saat nedir — artık sezgi değil gerçek
+              veriyle karar verilir.</div>
+            <div class="imp-tag"><strong>Stok &amp; operasyon optimizasyonu</strong><span>&nbsp;→ Doğru zamanlama</span>
+            </div>
+          </div>
+          <div class="imp-block rv" data-d="4">
+            <div class="imp-num">↑ Marka</div>
+            <div class="imp-title">Marka Değeri &amp; Rekabet Avantajı</div>
+            <div class="imp-desc">Specialty kahve dükkanı artık dijital bir deneyim de sunuyor — "kaliteli kahve"
+              algısı uygulamada yaşıyor.</div>
+            <div class="imp-tag"><strong>Rakiplerden ayrışma</strong><span>&nbsp;→ Dijital konumlanma</span></div>
+          </div>
+        </div>
+
+        <div class="imp-grid-sm" style="margin-top:2px">
+          <div class="imp-block rv" style="border-radius:0 0 0 22px">
+            <div class="imp-num" style="font-size:1.8rem">⚡ Verimlilik</div>
+            <div class="imp-title">Operasyonel Kolaylık</div>
+            <div class="imp-desc">Dijital sadakat = damga sayma yok, manuel takip yok. Otomatik kampanya yönetimi
+              personel yükünü azaltır.</div>
+          </div>
+          <div class="imp-block rv" data-d="2" style="border-radius:0 0 22px 0">
+            <div class="imp-num" style="font-size:1.8rem">🌱 Büyüme</div>
+            <div class="imp-title">Ölçeklenebilir Sistem</div>
+            <div class="imp-desc">İkinci şube açıldığında aynı sistem kolayca uygulanır. Kampanyalar merkezi yönetilir.
+              Büyüme altyapısı hazırdır.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ════════════════════════════════════════════════════════
+     §6 · NEDEN GOLDBEANS
+════════════════════════════════════════════════════════ -->
+  <section id="why" data-section="5">
+    <div class="wrap">
+      <div class="sec-inner">
+        <div class="why-grid">
+
+          <div class="rv-l">
+            <div class="sec-label" style="margin-bottom:20px">
+              <span class="label tc">Kişiselleştirme</span>
+            </div>
+            <h2 class="d-md" style="margin-bottom:18px; line-height:1.3">
+              Bu sistem<br><em>Goldbeans için</em><br>özel kurulur
+            </h2>
+            <p class="t-lg t2" style="margin-bottom:34px">
+              Hazır bir şablon değil. Goldbeans'in özgün kimliğine, specialty kahve anlayışına ve müşteri kitlesine göre
+              şekillenen bir sistem.
+            </p>
+
+            <div class="cust-list">
+              <div class="cust-item">
+                <div class="ci-icon-wrap">
+                  <span class="ico">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                      stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="13.5" cy="6.5" r=".8" fill="currentColor" stroke="none" />
+                      <circle cx="17.5" cy="10.5" r=".8" fill="currentColor" stroke="none" />
+                      <circle cx="8.5" cy="7.5" r=".8" fill="currentColor" stroke="none" />
+                      <circle cx="6.5" cy="12.5" r=".8" fill="currentColor" stroke="none" />
+                      <path
+                        d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.93 0 1.65-.75 1.65-1.69 0-.44-.18-.84-.44-1.13-.29-.29-.44-.65-.44-1.13A1.64 1.64 0 0 1 14.42 16h2c3.05 0 5.56-2.5 5.56-5.55C21.97 6.01 17.46 2 12 2z" />
+                    </svg>
+                  </span>
+                </div>
+                <div>
+                  <div class="ci-title">Marka Renk Paleti</div>
+                  <div class="ci-desc">Her ekran #023900 ve #ffffff ile özelleştirilmiş. Goldbeans'in yeşili tüm UI'a
+                    yayılmış.</div>
+                </div>
+              </div>
+
+              <div class="cust-item">
+                <div class="ci-icon-wrap">
+                  <span class="ico">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                      stroke-linecap="round" stroke-linejoin="round">
+                      <path
+                        d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 1 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                    </svg>
+                  </span>
+                </div>
+                <div>
+                  <div class="ci-title">Sadakat Mekaniği</div>
+                  <div class="ci-desc">Kaç kahvede bir bedava? Espresso mu, filtre mi, her ikisi mi? Siz belirleyin.
+                  </div>
+                </div>
+              </div>
+
+              <div class="cust-item">
+                <div class="ci-icon-wrap">
+                  <span class="ico">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                      stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                    </svg>
+                  </span>
+                </div>
+                <div>
+                  <div class="ci-title">İletişim Tonu</div>
+                  <div class="ci-desc">Goldbeans'in specialty kahve kültürü — bilgili, samimi, tutkulu. Push bildirimler
+                    markanın sesiyle konuşur.</div>
+                </div>
+              </div>
+
+              <div class="cust-item">
+                <div class="ci-icon-wrap">
+                  <span class="ico">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                      stroke-linecap="round" stroke-linejoin="round">
+                      <polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21" />
+                      <line x1="9" y1="3" x2="9" y2="18" />
+                      <line x1="15" y1="6" x2="15" y2="21" />
+                    </svg>
+                  </span>
+                </div>
+                <div>
+                  <div class="ci-title">Müşteri Segmentasyonu</div>
+                  <div class="ci-desc">Sabah müdavimleri, öğle molacıları, hafta sonu kahve tutkunları — her segmente
+                    ayrı kampanya.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="brand-cards rv-r">
+            <div class="brand-card">
+              <div class="bc-label">Goldbeans Renk Sistemi</div>
+              <div class="swatches">
+                <div class="swatch" style="background:#023900"></div>
+                <div class="swatch" style="background:#ffffff;border:1px solid rgba(255,255,255,.15)"></div>
+                <div class="swatch" style="background:#3db300"></div>
+                <div class="swatch-note">#023900 &nbsp;·&nbsp; #ffffff &nbsp;·&nbsp; Vurgu</div>
+              </div>
+              <div style="margin-top:16px;height:6px;border-radius:3px;background:var(--grad)"></div>
+            </div>
+
+            <div class="brand-card" style="background:rgba(2,57,0,.07);border-color:var(--border-c)">
+              <div class="bc-label">Sadakat Mekaniği</div>
+              <div style="display:flex;align-items:center;gap:12px;margin-top:4px">
+                <div style="flex:1;padding:14px 10px;background:rgba(0,0,0,.22);border-radius:12px;text-align:center">
+                  <div style="font-size:1.4rem;margin-bottom:4px">☕</div>
+                  <div style="font-size:.7rem;color:var(--t2)">5 Kahve</div>
+                </div>
+                <div style="font-size:1rem;color:var(--c1-lt);flex-shrink:0">→</div>
+                <div
+                  style="flex:1;padding:14px 10px;background:rgba(2,57,0,.18);border-radius:12px;text-align:center;border:1px solid var(--border-c)">
+                  <div style="font-size:1.4rem;margin-bottom:4px">🎁</div>
+                  <div style="font-size:.7rem;color:var(--c1-lt)">1 Bedava</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="brand-card">
+              <div class="bc-label">Uygulama Kimliği</div>
+              <div class="app-preview">
+                <div class="app-ico">G</div>
+                <div>
+                  <div style="font-family:var(--fH);font-size:.98rem;font-weight:600;font-style:italic">Goldbeans</div>
+                  <div style="font-size:.76rem;color:var(--t2);margin-top:2px">Sadakat &amp; Ödüller · Specialty Coffee
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ════════════════════════════════════════════════════════
+     §7 · FİYATLANDIRMA
+════════════════════════════════════════════════════════ -->
+  <section id="pricing" data-section="6">
+    <div class="wrap">
+      <div class="sec-inner">
+        <div class="pricing-head">
+          <div class="sec-label" style="justify-content:center;margin-bottom:14px">
+            <span class="label tc">Yatırım</span>
+          </div>
+          <h2 class="d-lg rv" style="margin-bottom:14px">Değeri, fiyatından çok daha büyük</h2>
+          <p class="t2 rv" data-d="1">Tek bir sadık müşteri, yatırımı defalarca geri kazandırır.</p>
+        </div>
+
+        <div class="pricing-wrap">
+
+          <div class="pricing-ctx rv-l">
+            <div class="pctx-intro">
+              <h3>Bu yatırım Goldbeans'e ne verir?</h3>
+              <p>Bir reklam bütçesi harcarsınız ve sonucu bilemezsiniz. Bu sistemle her müşteriden geri dönüş alır,
+                ölçer ve optimize edersiniz. Veriye dayalı bir kahve işletmesi yönetimi kurarsınız.</p>
+            </div>
+            <div class="pctx-item">
+              <div class="pctx-lbl">Kurulum</div>
+              <div class="pctx-val">Goldbeans'e özel tasarım &amp; entegrasyon</div>
+            </div>
+            <div class="pctx-item">
+              <div class="pctx-lbl">Platform</div>
+              <div class="pctx-val">iOS &amp; Android — ikisi birden</div>
+            </div>
+            <div class="pctx-item">
+              <div class="pctx-lbl">Destek</div>
+              <div class="pctx-val">Sürekli teknik destek &amp; güncelleme</div>
+            </div>
+            <div class="pctx-item">
+              <div class="pctx-lbl">Veri</div>
+              <div class="pctx-val">Gerçek zamanlı dashboard &amp; raporlar</div>
+            </div>
+            <div class="pctx-item">
+              <div class="pctx-lbl">Kullanıcı Limiti</div>
+              <div class="pctx-val">Sınırsız kullanıcı &amp; işlem</div>
+            </div>
+            <div style="padding:16px 18px;background:var(--grad-s);border:1px solid var(--border-c);border-radius:13px">
+              <div
+                style="font-size:.64rem;font-weight:600;letter-spacing:.13em;text-transform:uppercase;color:var(--t3);margin-bottom:5px">
+                Not</div>
+              <div style="font-size:.8rem;color:var(--t2);line-height:1.6">Goldbeans'in mevcut uygulama ekranları ile
+                sisteme hızlıca başlanabilir.</div>
+            </div>
+          </div>
+
+          <div class="pricing-card rv-r">
+            <div class="pc-badge">Goldbeans · Özel Fiyat</div>
+
+            <div class="comp-compare">
+              <div class="cc-left">
+                <div class="cc-lbl">Piyasa Ortalaması</div>
+                <div class="cc-struck">
+                  <span class="cc-struck-sym">₺</span>
+                  <span class="cc-struck-num">500.000</span>
+                  <span class="cc-struck-sfx">ve üzeri</span>
+                </div>
+              </div>
+              <div class="cc-arrow">→</div>
+              <div class="cc-save">
+                <div class="cc-save-badge">%50+ tasarruf</div>
+              </div>
+            </div>
+
+            <div class="price-block">
+              <div class="pr-tier-label">Uygulama Geliştirme</div>
+              <div class="price-row">
+                <span class="pr-sym">₺</span>
+                <span class="pr-amt">350.000</span>
+                <span class="pr-label">tek seferlik</span>
+              </div>
+
+              <div class="pr-extra-row">
+                <div class="pr-extra-item">
+                  <div class="pr-extra-lbl">Kurulum Ücreti</div>
+                  <div class="pr-extra-val">₺20.000 <span class="pr-extra-tag">tek seferlik</span></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="pc-div"></div>
+
+            <ul class="pc-feats">
+              <li>
+                <div class="chk">✓</div>QR Sadakat Sistemi — tüm ürünlerde geçerli
+              </li>
+              <li>
+                <div class="chk">✓</div>Kampanya Motoru — sınırsız kampanya
+              </li>
+              <li>
+                <div class="chk">✓</div>Push Bildirim Sistemi — hedefli iletişim
+              </li>
+              <li>
+                <div class="chk">✓</div>Lokasyon Bazlı Kampanya
+              </li>
+              <li>
+                <div class="chk">✓</div>Gamification — Rozet &amp; Ünvan Sistemi
+              </li>
+              <li>
+                <div class="chk">✓</div>Kullanıcı Profili &amp; Analitik Dashboard
+              </li>
+              <li>
+                <div class="chk">✓</div>Goldbeans'e Özel Tasarım &amp; Renkler
+              </li>
+              <li>
+                <div class="chk">✓</div>iOS &amp; Android uygulama
+              </li>
+            </ul>
+
+            <div class="pc-note">
+              Fiyat Goldbeans için özel belirlenmiştir.<br>
+              Kurulum ücreti görüşme sonrası kesinleştirilir.
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+
+
+  <!-- ── JAVASCRIPT ──────────────────────────────────────── -->
+  <script>
+    (function () {
+      'use strict';
+      const nav = document.getElementById('top-nav');
+      const pills = document.querySelectorAll('.nav-pill');
+      const spItems = document.querySelectorAll('.spi');
+      const secs = document.querySelectorAll('section[data-section]');
+      const kb = document.getElementById('kb');
+      let cur = 0;
+
+      /* nav stuck */
+      window.addEventListener('scroll', () => {
+        nav.classList.toggle('stuck', window.scrollY > 40);
+        updateActive();
+      }, { passive: true });
+
+      function updateActive() {
+        const mid = window.innerHeight / 2;
+        secs.forEach((s, i) => {
+          const r = s.getBoundingClientRect();
+          if (r.top <= mid && r.bottom >= mid) {
+            cur = i;
+            pills.forEach(p => p.classList.toggle('active', +p.dataset.s === i));
+            spItems.forEach(x => x.classList.toggle('active', +x.dataset.s === i));
+          }
+        });
+      }
+
+      /* dot clicks */
+      [...pills, ...spItems].forEach(el =>
+        el.addEventListener('click', () => secs[+el.dataset.s].scrollIntoView({ behavior: 'smooth' }))
+      );
+
+      /* keyboard nav */
+      document.addEventListener('keydown', e => {
+        if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
+          e.preventDefault();
+          secs[Math.min(cur + 1, secs.length - 1)].scrollIntoView({ behavior: 'smooth' });
+        } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+          e.preventDefault();
+          secs[Math.max(cur - 1, 0)].scrollIntoView({ behavior: 'smooth' });
+        }
+      });
+
+      setTimeout(() => kb.classList.add('gone'), 5500);
+
+      /* scroll reveal */
+      const obs = new IntersectionObserver(entries => {
+        entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('on'); });
+      }, { threshold: .1, rootMargin: '0px 0px -50px 0px' });
+      document.querySelectorAll('.rv,.rv-l,.rv-r').forEach(el => obs.observe(el));
+
+      /* phone 3D tilt */
+      document.querySelectorAll('.phone').forEach(ph => {
+        const isL = ph.classList.contains('lft');
+        const isR = ph.classList.contains('rgt');
+        ph.addEventListener('mousemove', e => {
+          const r = ph.getBoundingClientRect();
+          const x = ((e.clientX - r.left) / r.width - .5) * 12;
+          const y = ((e.clientY - r.top) / r.height - .5) * 12;
+          ph.style.transform = `perspective(900px) rotateY(${x}deg) rotateX(${-y}deg) translateY(-10px)`;
+        });
+        ph.addEventListener('mouseleave', () => {
+          if (window.innerWidth <= 960) { ph.style.transform = ''; return; }
+          if (isL) ph.style.transform = 'rotate(-6deg) translateX(14px)';
+          else if (isR) ph.style.transform = 'rotate(6deg) translateX(-14px)';
+          else ph.style.transform = '';
+        });
+      });
+
+      /* hero orb parallax */
+      const oa = document.querySelector('.orb-a');
+      const ob = document.querySelector('.orb-b');
+      const oc = document.querySelector('.orb-c');
+      let raf = null;
+      document.addEventListener('mousemove', e => {
+        if (raf) cancelAnimationFrame(raf);
+        raf = requestAnimationFrame(() => {
+          const x = (e.clientX / innerWidth - .5) * 26;
+          const y = (e.clientY / innerHeight - .5) * 26;
+          if (oa) oa.style.transform = `translate(${x * 1.4}px,${y * 1.4}px)`;
+          if (ob) ob.style.transform = `translate(${-x}px,${-y}px)`;
+          if (oc) oc.style.transform = `translate(calc(-50% + ${x * .6}px),calc(-50% + ${y * .6}px))`;
+        });
+      }, { passive: true });
+
+    })();
+  </script>
+</body>
+
+</html>
